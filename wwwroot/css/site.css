@@ -145,3 +145,36 @@ body {
     background: #dc3545;
     color: #dc3545;
 }
+
+.book-hero {
+    overflow: hidden;
+    min-height: 500px;
+    display: flex;
+    align-items: center;
+}
+
+.book-hero-bg {
+    z-index: 0;
+}
+
+.book-hero .container {
+    z-index: 1;
+}
+
+.book-cover {
+    transition: transform 0.3s ease;
+}
+
+.book-cover:hover {
+    transform: scale(1.05);
+}
+
+.breadcrumb-item + .breadcrumb-item::before {
+    color: rgba(255, 255, 255, 0.5);
+}
+
+@media (max-width: 768px) {
+    .book-hero {
+        min-height: auto;
+    }
+}

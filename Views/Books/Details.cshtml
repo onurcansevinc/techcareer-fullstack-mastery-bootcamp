@@ -1,100 +1,67 @@
-@model techcareer_fullstack_mastery_bootcamp.Models.Book
-
+@model BookDetailViewModel
 @{
-    ViewData["Title"] = Model.Title;
-    var similarBooks = (List<Book>)ViewData["SimilarBooks"];
+    ViewData["Title"] = Model.Book.Title;
 }
 
-<div class="container mt-4">
-    <nav aria-label="breadcrumb">
-        <ol class="breadcrumb">
-            <li class="breadcrumb-item"><a asp-action="Index">Kitaplar</a></li>
-            <li class="breadcrumb-item active">@Model.Title</li>
-        </ol>
-    </nav>
-
-    <div class="row">
-        <!-- Kitap Görseli -->
-        <div class="col-md-4">
-            @if (!string.IsNullOrEmpty(Model.ImagePath))
-            {
-                <img src="@Model.ImagePath" class="img-fluid rounded shadow" alt="@Model.Title">
-            }
-            else
-            {
-                <img src="/images/default-book.png" class="img-fluid rounded shadow p-4" alt="Varsayılan kitap görseli">
-            }
-        </div>
-
-        <!-- Kitap Detayları -->
-        <div class="col-md-8">
-            <h1 class="mb-3">@Model.Title</h1>
-            
-            <div class="card mb-4">
-                <div class="card-body">
-                    <h5 class="card-title">Kitap Bilgileri</h5>
-                    <dl class="row">
-                        <dt class="col-sm-3">Yazar</dt>
-                        <dd class="col-sm-9">@Model.Author</dd>
-
-                        <dt class="col-sm-3">Tür</dt>
-                        <dd class="col-sm-9">@Model.Genre</dd>
-
-                        <dt class="col-sm-3">Sayfa Sayısı</dt>
-                        <dd class="col-sm-9">@Model.PageCount</dd>
-                    </dl>
-
-                    <h5 class="mt-4">Açıklama</h5>
-                    <p class="card-text">@Model.Description</p>
+<!-- Hero Section -->
+<div class="book-hero position-relative mb-5">
+    <div class="book-hero-bg position-absolute w-100 h-100" style="background: linear-gradient(rgba(0,0,0,0.8), rgba(0,0,0,0.8)), url('@(Model.Book.ImagePath ?? "/images/default-book.png")'); background-size: cover; background-position: center;"></div>
+    <div class="container position-relative py-5">
+        <div class="row align-items-center">
+            <!-- Kitap Görseli -->
+            <div class="col-lg-3 mb-4 mb-lg-0">
+                <div class="book-cover shadow">
+                    <img src="@(Model.Book.ImagePath ?? "/images/default-book.png")" class="img-fluid rounded" alt="@Model.Book.Title">
                 </div>
             </div>
-
-            <!-- Aksiyon Butonları -->
-            <div class="mb-4 d-flex justify-content-between">
-                <div>
-                    <a asp-action="Edit" asp-route-id="@Model.Id" class="btn btn-warning me-2">
-                        <i class="bi bi-pencil"></i> Düzenle
-                    </a>
-                    <a asp-action="Delete" asp-route-id="@Model.Id" class="btn btn-danger">
-                        <i class="bi bi-trash"></i> Sil
-                    </a>
+            <!-- Kitap Bilgileri -->
+            <div class="col-lg-9 text-white">
+                <nav aria-label="breadcrumb">
+                    <ol class="breadcrumb">
+                        <li class="breadcrumb-item"><a href="/" class="text-white-50">Ana Sayfa</a></li>
+                        <li class="breadcrumb-item"><a asp-controller="Books" asp-action="Index" class="text-white-50">Kitaplar</a></li>
+                        <li class="breadcrumb-item active text-white" aria-current="page">@Model.Book.Title</li>
+                    </ol>
+                </nav>
+                <h1 class="display-4 fw-bold mb-3">@Model.Book.Title</h1>
+                <div class="d-flex align-items-center gap-3 mb-4">
+                    <span class="badge bg-primary">@Model.Book.Genre</span>
+                    <span class="text-white-50"><i class="bi bi-book me-1"></i> @Model.Book.PageCount sayfa</span>
                 </div>
-                <div>
-                    <a asp-action="Index" class="btn btn-secondary">
-                        <i class="bi bi-arrow-left-circle"></i> Listeye Dön
-                    </a>
-                </div>
+                <h5 class="text-white-50 mb-4">
+                    <i class="bi bi-person-circle me-2"></i>@Model.Book.Author
+                </h5>
+                <p class="lead mb-4">@Model.Book.Description</p>
             </div>
         </div>
     </div>
+</div>
 
-    <!-- Benzer Kitaplar -->
-    @if (similarBooks != null && similarBooks.Any())
-    {
-        <div class="mt-5">
-            <h3>Benzer Kitaplar</h3>
-            <div class="row">
-                @foreach (var book in similarBooks)
-                {
-                    <div class="col-md-4">
-                        <div class="card h-100">
-                            @if (!string.IsNullOrEmpty(book.ImagePath))
-                            {
-                                <img src="@book.ImagePath" class="img-fluid rounded shadow" alt="@book.Title">
-                            }
-                            else
-                            {
-                                <img src="/images/default-book.png" class="img-fluid rounded shadow p-4" alt="Varsayılan kitap görseli">
-                            }
-                            <div class="card-body">
-                                <h5 class="card-title">@book.Title</h5>
-                                <p class="card-text">@book.Description</p>
-                                <a asp-action="Details" asp-route-id="@book.Id" class="btn btn-primary">Detaylar</a>
-                            </div>
-                        </div>
+<!-- Benzer Kitaplar -->
+<div class="container mb-5">
+    <h2 class="mb-4">
+        <i class="bi bi-book-half text-primary me-2"></i>
+        Benzer Kitaplar
+    </h2>
+    <div class="row row-cols-1 row-cols-md-4 g-4">
+        @foreach (var book in Model.SimilarBooks)
+        {
+            <div class="col">
+                <div class="card h-100 book-card shadow-sm">
+                    <img src="@(book.ImagePath ?? "/images/default-book.png")" class="card-img-top" alt="@book.Title" style="height: 250px; object-fit: cover;">
+                    <div class="card-body">
+                        <span class="badge bg-primary mb-2">@book.Genre</span>
+                        <h5 class="card-title text-truncate">@book.Title</h5>
+                        <p class="card-subtitle text-muted mb-2">@book.Author</p>
+                        <p class="card-text small text-truncate">@book.Description</p>
                     </div>
-                }
+                    <div class="card-footer bg-transparent border-top-0">
+                        <a asp-action="Details" asp-route-id="@book.Id" class="btn btn-outline-primary w-100">
+                            <i class="bi bi-eye me-1"></i> İncele
+                        </a>
+                    </div>
+                </div>
             </div>
-        </div>
-    }
+        }
+    </div>
 </div>

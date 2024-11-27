@@ -85,7 +85,6 @@ namespace techcareer_fullstack_mastery_bootcamp.Controllers
             }
 
             var book = await _context.Books
-                .Include(b => b.Reviews)
                 .FirstOrDefaultAsync(m => m.Id == id);
 
             if (book == null)
@@ -93,14 +92,16 @@ namespace techcareer_fullstack_mastery_bootcamp.Controllers
                 return NotFound();
             }
 
-            var similarBooks = await _context.Books
-                .Where(b => b.Genre == book.Genre && b.Id != book.Id)
-                .Take(3)
-                .ToListAsync();
+            var viewModel = new BookDetailViewModel
+            {
+                Book = book,
+                SimilarBooks = await _context.Books
+                    .Where(b => b.Genre == book.Genre && b.Id != book.Id)
+                    .Take(4)
+                    .ToListAsync()
+            };
 
-            ViewData["SimilarBooks"] = similarBooks;
-
-            return View(book);
+            return View(viewModel);
         }
 
         // GET: Books/Create
