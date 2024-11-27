@@ -8,6 +8,7 @@ namespace techcareer_fullstack_mastery_bootcamp.Controllers
     public class BooksController : Controller
     {
         private readonly BookContext _context;
+        private readonly int _pageSize = 12; // Her sayfada 12 kitap gösterilecek
 
         public BooksController(BookContext context)
         {
@@ -15,7 +16,7 @@ namespace techcareer_fullstack_mastery_bootcamp.Controllers
         }
 
         // GET: Books
-        public async Task<IActionResult> Index(string searchString, string author, string genre, string sortOrder)
+        public async Task<IActionResult> Index(string searchString, string author, string genre, string sortOrder, int? pageNumber)
         {
             var booksQuery = _context.Books.AsQueryable();
 
@@ -68,10 +69,11 @@ namespace techcareer_fullstack_mastery_bootcamp.Controllers
             ViewData["CurrentGenre"] = genre;
             ViewData["CurrentSort"] = sortOrder;
 
-            // Tüm türleri getir (filtreleme için)
+            // Tüm türleri getir
             ViewData["Genres"] = await _context.Books.Select(b => b.Genre).Distinct().ToListAsync();
 
-            return View(await booksQuery.ToListAsync());
+            // Sayfalama
+            return View(await PaginatedList<Book>.CreateAsync(booksQuery, pageNumber ?? 1, _pageSize));
         }
 
         // GET: Books/Details/5

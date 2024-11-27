@@ -1,4 +1,5 @@
-@model IEnumerable<techcareer_fullstack_mastery_bootcamp.Models.Book>
+@using techcareer_fullstack_mastery_bootcamp.Models
+@model PaginatedList<Book>
 
 @{
     ViewData["Title"] = "Kitaplar";
@@ -124,3 +125,47 @@
         </div>
     }
 </div>
+
+<!-- Sayfalama -->
+<nav aria-label="Sayfalama">
+    <ul class="pagination justify-content-center">
+        <li class="page-item @(!Model.HasPreviousPage ? "disabled" : "")">
+            <a class="page-link" 
+               asp-action="Index"
+               asp-route-pageNumber="@(Model.PageIndex - 1)"
+               asp-route-searchString="@ViewData["CurrentFilter"]"
+               asp-route-author="@ViewData["CurrentAuthor"]"
+               asp-route-genre="@ViewData["CurrentGenre"]"
+               asp-route-sortOrder="@ViewData["CurrentSort"]">
+                <i class="bi bi-chevron-left"></i> Önceki
+            </a>
+        </li>
+
+        @for (int i = 1; i <= Model.TotalPages; i++)
+        {
+            <li class="page-item @(i == Model.PageIndex ? "active" : "")">
+                <a class="page-link"
+                   asp-action="Index"
+                   asp-route-pageNumber="@i"
+                   asp-route-searchString="@ViewData["CurrentFilter"]"
+                   asp-route-author="@ViewData["CurrentAuthor"]"
+                   asp-route-genre="@ViewData["CurrentGenre"]"
+                   asp-route-sortOrder="@ViewData["CurrentSort"]">
+                    @i
+                </a>
+            </li>
+        }
+
+        <li class="page-item @(!Model.HasNextPage ? "disabled" : "")">
+            <a class="page-link"
+               asp-action="Index"
+               asp-route-pageNumber="@(Model.PageIndex + 1)"
+               asp-route-searchString="@ViewData["CurrentFilter"]"
+               asp-route-author="@ViewData["CurrentAuthor"]"
+               asp-route-genre="@ViewData["CurrentGenre"]"
+               asp-route-sortOrder="@ViewData["CurrentSort"]">
+                Sonraki <i class="bi bi-chevron-right"></i>
+            </a>
+        </li>
+    </ul>
+</nav>
