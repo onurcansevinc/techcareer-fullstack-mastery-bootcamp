@@ -25,6 +25,8 @@ namespace techcareer_fullstack_mastery_bootcamp.Models
         [StringLength(50, ErrorMessage = "Tür en fazla 50 karakter olabilir.")]
         public string Genre { get; set; }
 
+        public string? ImagePath { get; set; }
+
         public List<Review> Reviews { get; set; } = new List<Review>();
     }
 } 

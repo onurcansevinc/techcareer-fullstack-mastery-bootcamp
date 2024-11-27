@@ -1,0 +1,100 @@
+@model techcareer_fullstack_mastery_bootcamp.Models.Book
+
+@{
+    ViewData["Title"] = Model.Title;
+    var similarBooks = (List<Book>)ViewData["SimilarBooks"];
+}
+
+<div class="container mt-4">
+    <nav aria-label="breadcrumb">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a asp-action="Index">Kitaplar</a></li>
+            <li class="breadcrumb-item active">@Model.Title</li>
+        </ol>
+    </nav>
+
+    <div class="row">
+        <!-- Kitap Görseli -->
+        <div class="col-md-4">
+            @if (!string.IsNullOrEmpty(Model.ImagePath))
+            {
+                <img src="@Model.ImagePath" class="img-fluid rounded shadow" alt="@Model.Title">
+            }
+            else
+            {
+                <img src="/images/default-book.png" class="img-fluid rounded shadow p-4" alt="Varsayılan kitap görseli">
+            }
+        </div>
+
+        <!-- Kitap Detayları -->
+        <div class="col-md-8">
+            <h1 class="mb-3">@Model.Title</h1>
+            
+            <div class="card mb-4">
+                <div class="card-body">
+                    <h5 class="card-title">Kitap Bilgileri</h5>
+                    <dl class="row">
+                        <dt class="col-sm-3">Yazar</dt>
+                        <dd class="col-sm-9">@Model.Author</dd>
+
+                        <dt class="col-sm-3">Tür</dt>
+                        <dd class="col-sm-9">@Model.Genre</dd>
+
+                        <dt class="col-sm-3">Sayfa Sayısı</dt>
+                        <dd class="col-sm-9">@Model.PageCount</dd>
+                    </dl>
+
+                    <h5 class="mt-4">Açıklama</h5>
+                    <p class="card-text">@Model.Description</p>
+                </div>
+            </div>
+
+            <!-- Aksiyon Butonları -->
+            <div class="mb-4 d-flex justify-content-between">
+                <div>
+                    <a asp-action="Edit" asp-route-id="@Model.Id" class="btn btn-warning me-2">
+                        <i class="bi bi-pencil"></i> Düzenle
+                    </a>
+                    <a asp-action="Delete" asp-route-id="@Model.Id" class="btn btn-danger">
+                        <i class="bi bi-trash"></i> Sil
+                    </a>
+                </div>
+                <div>
+                    <a asp-action="Index" class="btn btn-secondary">
+                        <i class="bi bi-arrow-left-circle"></i> Listeye Dön
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Benzer Kitaplar -->
+    @if (similarBooks != null && similarBooks.Any())
+    {
+        <div class="mt-5">
+            <h3>Benzer Kitaplar</h3>
+            <div class="row">
+                @foreach (var book in similarBooks)
+                {
+                    <div class="col-md-4">
+                        <div class="card h-100">
+                            @if (!string.IsNullOrEmpty(book.ImagePath))
+                            {
+                                <img src="@book.ImagePath" class="img-fluid rounded shadow" alt="@book.Title">
+                            }
+                            else
+                            {
+                                <img src="/images/default-book.jpg" class="img-fluid rounded shadow" alt="Varsayılan kitap görseli">
+                            }
+                            <div class="card-body">
+                                <h5 class="card-title">@book.Title</h5>
+                                <p class="card-text">@book.Description</p>
+                                <a asp-action="Details" asp-route-id="@book.Id" class="btn btn-primary">Detaylar</a>
+                            </div>
+                        </div>
+                    </div>
+                }
+            </div>
+        </div>
+    }
+</div>

@@ -1,0 +1,41 @@
+@model techcareer_fullstack_mastery_bootcamp.Models.Book
+
+@{
+    ViewData["Title"] = "Kitap Sil";
+}
+
+<div class="container">
+    <h1 class="text-danger">Kitap Sil</h1>
+
+    <div class="alert alert-warning" role="alert">
+        <h4>Bu kitabı silmek istediğinizden emin misiniz?</h4>
+    </div>
+
+    <div class="card mb-4">
+        <div class="card-body">
+            <h5 class="card-title">@Model.Title</h5>
+            <h6 class="card-subtitle mb-2 text-muted">@Model.Author</h6>
+            
+            <dl class="row">
+                <dt class="col-sm-3">Açıklama</dt>
+                <dd class="col-sm-9">@Model.Description</dd>
+
+                <dt class="col-sm-3">Sayfa Sayısı</dt>
+                <dd class="col-sm-9">@Model.PageCount</dd>
+
+                <dt class="col-sm-3">Tür</dt>
+                <dd class="col-sm-9">@Model.Genre</dd>
+            </dl>
+        </div>
+    </div>
+
+    <form asp-action="Delete">
+        <input type="hidden" asp-for="Id" />
+        <button type="submit" class="btn btn-danger">
+            <i class="bi bi-trash"></i> Sil
+        </button>
+        <a asp-action="Index" class="btn btn-secondary">
+            <i class="bi bi-arrow-left-circle"></i> Listeye Dön
+        </a>
+    </form>
+</div> 
