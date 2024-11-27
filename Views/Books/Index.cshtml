@@ -1,25 +1,92 @@
 @model IEnumerable<techcareer_fullstack_mastery_bootcamp.Models.Book>
 
 @{
-    ViewData["Title"] = "Kitap Listesi";
+    ViewData["Title"] = "Kitaplar";
 }
 
-@if (TempData["Success"] != null)
-{
-    <div class="alert alert-success alert-dismissible fade show" role="alert">
-        @TempData["Success"]
-        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-    </div>
-}
 
-<h1>Kitap Listesi</h1>
-
-<p>
+<div class="d-flex justify-content-between">
+    <h1>Kitaplar</h1>
     <a asp-action="Create" class="btn btn-primary mb-3">
         <i class="bi bi-plus-circle"></i> Yeni Kitap Ekle
     </a>
-</p>
+</div>
 
+<!-- Arama ve Filtreleme Formu -->
+<div class="card mb-4 mt-4">
+    <div class="card-body">
+        <form asp-action="Index" method="get" class="row g-3">
+            <div class="col-md-3">
+                <label class="form-label">Kitap Adı</label>
+                <input type="text" name="searchString" value="@ViewData["CurrentFilter"]" class="form-control" placeholder="Kitap adı ara...">
+            </div>
+            
+            <div class="col-md-3">
+                <label class="form-label">Yazar</label>
+                <input type="text" name="author" value="@ViewData["CurrentAuthor"]" class="form-control" placeholder="Yazar ara...">
+            </div>
+            
+            <div class="col-md-3">
+                <label class="form-label">Tür</label>
+                <select name="genre" class="form-select">
+                    <option value="">Tüm Türler</option>
+                    @foreach (var genre in (IEnumerable<string>)ViewData["Genres"])
+                    {
+                        if (genre == ViewData["CurrentGenre"]?.ToString())
+                        {
+                            <option value="@genre" selected>@genre</option>
+                        }
+                        else
+                        {
+                            <option value="@genre">@genre</option>
+                        }
+                    }
+                </select>
+            </div>
+            
+            <div class="col-md-3 d-flex align-items-end">
+                <button type="submit" class="btn btn-primary me-2">
+                    <i class="bi bi-search"></i> Ara
+                </button>
+                <a asp-action="Index" class="btn btn-secondary">
+                    <i class="bi bi-x-circle"></i> Filtreleri Temizle
+                </a>
+            </div>
+        </form>
+    </div>
+</div>
+
+<!-- Sıralama Linkleri -->
+<div class="mb-3">
+    <div class="btn-group">
+        <a asp-action="Index" 
+           asp-route-sortOrder="@ViewData["TitleSortParm"]"
+           asp-route-searchString="@ViewData["CurrentFilter"]"
+           asp-route-author="@ViewData["CurrentAuthor"]"
+           asp-route-genre="@ViewData["CurrentGenre"]"
+           class="btn btn-outline-primary">
+            <i class="bi bi-sort-alpha-down"></i> İsim
+        </a>
+        <a asp-action="Index" 
+           asp-route-sortOrder="@ViewData["AuthorSortParm"]"
+           asp-route-searchString="@ViewData["CurrentFilter"]"
+           asp-route-author="@ViewData["CurrentAuthor"]"
+           asp-route-genre="@ViewData["CurrentGenre"]"
+           class="btn btn-outline-primary">
+            <i class="bi bi-sort-alpha-down"></i> Yazar
+        </a>
+        <a asp-action="Index" 
+           asp-route-sortOrder="@ViewData["PagesSortParm"]"
+           asp-route-searchString="@ViewData["CurrentFilter"]"
+           asp-route-author="@ViewData["CurrentAuthor"]"
+           asp-route-genre="@ViewData["CurrentGenre"]"
+           class="btn btn-outline-primary">
+            <i class="bi bi-sort-numeric-down"></i> Sayfa Sayısı
+        </a>
+    </div>
+</div>
+
+<!-- Kitap Listesi -->
 <div class="row">
     @foreach (var item in Model)
     {
@@ -34,20 +101,20 @@
                     <img src="/images/default-book.png" class="card-img-top" alt="Varsayılan kitap görseli" style="height: 200px; object-fit: cover;">
                 }
                 <div class="card-body">
-                    <h5 class="card-title">@item.Title</h5>
-                    <h6 class="card-subtitle mb-2 text-muted">@item.Author</h6>
+                    <h5 class="card-title text-truncate">@item.Title</h5>
+                    <h6 class="card-subtitle mb-2 text-muted text-truncate">@item.Author</h6>
                     <p class="card-text text-truncate">@item.Description</p>
                     <p class="card-text"><small class="text-muted">Sayfa Sayısı: @item.PageCount</small></p>
                     <p class="card-text"><small class="text-muted">Tür: @item.Genre</small></p>
                     <div class="d-flex justify-content-between">
-                    <div>
-                        <a asp-action="Details" asp-route-id="@item.Id" class="btn btn-info btn-sm">
-                            <i class="bi bi-info-circle"></i> Detaylar
-                        </a>
-                        <a asp-action="Edit" asp-route-id="@item.Id" class="btn btn-warning btn-sm">
-                            <i class="bi bi-pencil"></i> Düzenle
-                        </a>
-                    </div>
+                        <div>
+                            <a asp-action="Details" asp-route-id="@item.Id" class="btn btn-info btn-sm">
+                                <i class="bi bi-info-circle"></i> Detaylar
+                            </a>
+                            <a asp-action="Edit" asp-route-id="@item.Id" class="btn btn-warning btn-sm">
+                                <i class="bi bi-pencil"></i> Düzenle
+                            </a>
+                        </div>
                         <a asp-action="Delete" asp-route-id="@item.Id" class="btn btn-danger btn-sm">
                             <i class="bi bi-trash"></i> Sil
                         </a>

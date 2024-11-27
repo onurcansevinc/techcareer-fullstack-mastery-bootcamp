@@ -15,9 +15,63 @@ namespace techcareer_fullstack_mastery_bootcamp.Controllers
         }
 
         // GET: Books
-        public async Task<IActionResult> Index()
+        public async Task<IActionResult> Index(string searchString, string author, string genre, string sortOrder)
         {
-            return View(await _context.Books.ToListAsync());
+            var booksQuery = _context.Books.AsQueryable();
+
+            // Arama filtreleri
+            if (!string.IsNullOrEmpty(searchString))
+            {
+                booksQuery = booksQuery.Where(b => b.Title.Contains(searchString));
+            }
+
+            if (!string.IsNullOrEmpty(author))
+            {
+                booksQuery = booksQuery.Where(b => b.Author.Contains(author));
+            }
+
+            if (!string.IsNullOrEmpty(genre))
+            {
+                booksQuery = booksQuery.Where(b => b.Genre == genre);
+            }
+
+            // Sıralama
+            ViewData["TitleSortParm"] = string.IsNullOrEmpty(sortOrder) ? "title_desc" : "";
+            ViewData["AuthorSortParm"] = sortOrder == "author" ? "author_desc" : "author";
+            ViewData["PagesSortParm"] = sortOrder == "pages" ? "pages_desc" : "pages";
+
+            switch (sortOrder)
+            {
+                case "title_desc":
+                    booksQuery = booksQuery.OrderByDescending(b => b.Title);
+                    break;
+                case "author":
+                    booksQuery = booksQuery.OrderBy(b => b.Author);
+                    break;
+                case "author_desc":
+                    booksQuery = booksQuery.OrderByDescending(b => b.Author);
+                    break;
+                case "pages":
+                    booksQuery = booksQuery.OrderBy(b => b.PageCount);
+                    break;
+                case "pages_desc":
+                    booksQuery = booksQuery.OrderByDescending(b => b.PageCount);
+                    break;
+                default:
+                    booksQuery = booksQuery.OrderBy(b => b.Title);
+                    break;
+            }
+
+            // Mevcut filtreleri ViewData'ya ekle
+            ViewData["CurrentFilter"] = searchString;
+            ViewData["CurrentAuthor"] = author;
+            ViewData["CurrentGenre"] = genre;
+            ViewData["CurrentSort"] = sortOrder;
+
+            // Tüm türleri getir (filtreleme için)
+            ViewData["Genres"] = await _context.Books.Select(b => b.Genre).Distinct().ToListAsync();
+
+            return View(await booksQuery.ToListAsync());
         }
 
         // GET: Books/Details/5
