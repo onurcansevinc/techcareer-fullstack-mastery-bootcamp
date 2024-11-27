@@ -85,6 +85,7 @@ namespace techcareer_fullstack_mastery_bootcamp.Controllers
             }
 
             var book = await _context.Books
+                .Include(b => b.Reviews)
                 .FirstOrDefaultAsync(m => m.Id == id);
 
             if (book == null)
@@ -294,6 +295,28 @@ namespace techcareer_fullstack_mastery_bootcamp.Controllers
         private bool BookExists(int id)
         {
             return _context.Books.Any(e => e.Id == id);
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> AddReview(int id, string comment, int rating)
+        {
+            var book = await _context.Books.FindAsync(id);
+            if (book == null)
+            {
+                return NotFound();
+            }
+
+            var review = new Review
+            {
+                BookId = id,
+                Comment = comment,
+                Rating = rating
+            };
+
+            _context.Add(review);
+            await _context.SaveChangesAsync();
+
+            return RedirectToAction(nameof(Details), new { id });
         }
     }
 } 
