@@ -1,0 +1,38 @@
+@model IEnumerable<techcareer_fullstack_mastery_bootcamp.Models.Book>
+
+@{
+    ViewData["Title"] = "Kitap Listesi";
+}
+
+@if (TempData["Success"] != null)
+{
+    <div class="alert alert-success alert-dismissible fade show" role="alert">
+        @TempData["Success"]
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+}
+
+<h1>Kitap Listesi</h1>
+
+<p>
+    <a asp-action="Create" class="btn btn-primary">Yeni Kitap Ekle</a>
+</p>
+
+<div class="row">
+    @foreach (var item in Model)
+    {
+        <div class="col-md-4 mb-4">
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title">@item.Title</h5>
+                    <h6 class="card-subtitle mb-2 text-muted">@item.Author</h6>
+                    <p class="card-text">@item.Description</p>
+                    <p class="card-text"><small class="text-muted">Sayfa Sayısı: @item.PageCount</small></p>
+                    <p class="card-text"><small class="text-muted">Tür: @item.Genre</small></p>
+                    <a asp-action="Details" asp-route-id="@item.Id" class="btn btn-info">Detaylar</a>
+                    <a asp-action="Edit" asp-route-id="@item.Id" class="btn btn-warning">Düzenle</a>
+                </div>
+            </div>
+        </div>
+    }
+</div>
