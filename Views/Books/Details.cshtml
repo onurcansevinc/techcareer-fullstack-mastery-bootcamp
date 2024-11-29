@@ -112,11 +112,24 @@
                                             <i class="bi @(i <= review.Rating ? "bi-star-fill text-warning" : "bi-star")"></i>
                                         }
                                     </div>
-                                    <small class="text-muted">
-                                        @review.CreatedAt.ToString("dd.MM.yyyy HH:mm")
-                                    </small>
+                                    <div class="review-actions">
+                                        <button class="btn btn-sm btn-outline-primary edit-review" 
+                                                data-review-id="@review.Id"
+                                                data-review-comment="@review.Comment"
+                                                data-review-rating="@review.Rating">
+                                            <i class="bi bi-pencil"></i>
+                                        </button>
+                                        <form asp-controller="Review" asp-action="Delete" method="post" class="d-inline">
+                                            <input type="hidden" name="id" value="@review.Id" />
+                                            <button type="submit" class="btn btn-sm btn-outline-danger" 
+                                                    onclick="return confirm('Yorumu silmek istediğinizden emin misiniz?')">
+                                                <i class="bi bi-trash"></i>
+                                            </button>
+                                        </form>
+                                    </div>
                                 </div>
-                                <p class="mb-0">@review.Comment</p>
+                                <p class="mb-1">@review.Comment</p>
+                                <small class="text-muted">@review.CreatedAt.ToString("dd.MM.yyyy HH:mm")</small>
                             </div>
                         }
                     }
@@ -132,3 +145,60 @@
         </div>
     </div>
 </div>
+
+<!-- Yorum Düzenleme Modal -->
+<div class="modal fade" id="editReviewModal" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Yorumu Düzenle</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <form asp-controller="Review" asp-action="Edit" method="post">
+                <div class="modal-body">
+                    <input type="hidden" name="id" id="editReviewId">
+                    <div class="mb-3">
+                        <label class="form-label">Puanınız</label>
+                        <div class="rating">
+                            @for (int i = 5; i >= 1; i--)
+                            {
+                                <input type="radio" name="rating" value="@i" id="editStar@(i)" />
+                                <label for="editStar@(i)"><i class="bi bi-star-fill"></i></label>
+                            }
+                        </div>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Yorumunuz</label>
+                        <textarea name="comment" id="editReviewComment" class="form-control" rows="3" required></textarea>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">İptal</button>
+                    <button type="submit" class="btn btn-primary">Kaydet</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const editButtons = document.querySelectorAll('.edit-review');
+            
+            editButtons.forEach(button => {
+                button.addEventListener('click', function() {
+                    const reviewId = this.dataset.reviewId;
+                    const comment = this.dataset.reviewComment;
+                    const rating = this.dataset.reviewRating;
+                    
+                    document.getElementById('editReviewId').value = reviewId;
+                    document.getElementById('editReviewComment').value = comment;
+                    document.querySelector(`#editReviewModal input[value="${rating}"]`).checked = true;
+                    
+                    new bootstrap.Modal(document.getElementById('editReviewModal')).show();
+                });
+            });
+        });
+    </script>
+}
